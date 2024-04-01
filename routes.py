@@ -1,41 +1,11 @@
 from flask import Flask,render_template,redirect,url_for,flash,request,session
 from app import app
+from functools import wraps
 from models import db, User,Book,BookRequest,Feedback,AccessLog,Section
 from werkzeug.security import generate_password_hash ,check_password_hash
 
 
-# @app.route('/')
-# def index():
-#     return render_template('index.html')
 
-@app.route('/')
-def index():
-    user = User.query.get(session['user_id'])
-    if user.is_librarian:
-        return redirect(url_for('librarian'))
-    
-    sections = Section.query.all()
-
-    # cname = request.args.get('cname') or ''
-    # pname = request.args.get('pname') or ''
-    # price = request.args.get('price')
-
-    # if price:
-    #     try:
-    #         price = float(price)
-    #     except ValueError:
-    #         flash('Invalid price')
-    #         return redirect(url_for('index'))
-    #     if price <= 0:
-    #         flash('Invalid price')
-    #         return redirect(url_for('index'))
-
-    # if cname:
-    #     categories = Category.query.filter(Category.name.ilike(f'%{cname}%')).all()
-
-    return render_template('index.html', sections=sections )
-
-################################
 @app.route('/register')
 def register():
     return render_template('register.html')
@@ -47,9 +17,15 @@ def register_post():
     confirm_password = request.form.get('confirm_password')
     name = request.form.get('name')
     is_librarian = int(request.form.get('userType'))
+
+    if not username or not password or not confirm_password:
+        flash('Please fill out all fields')
+        return redirect(url_for('register'))
+
     if password != confirm_password:
         flash('Passwords do not match')
         return redirect(url_for('register'))
+    
     user = User.query.filter_by(username=username).first()
     if user:
         flash('Username already exists')
@@ -71,6 +47,10 @@ def login_post():
     username = request.form.get('username')
     password = request.form.get('password')
     
+    if not username or not password:
+        flash('Please fill out all fields')
+        return redirect(url_for('login'))
+
     user = User.query.filter_by(username = username).first()
 
     if not user:
@@ -81,19 +61,45 @@ def login_post():
         flash('Incorrect password')
         return redirect(url_for('login'))
     
-    flash('Login successful')
     session['user_id'] = user.id
+    flash('Login successful')
     return redirect(url_for('index'))
 
 ############################################
+
+def auth_required(func):
+    @wraps(func)
+    def inner(*args, **kwargs):
+        if 'user_id' in session:
+            return func(*args, **kwargs)
+        else:
+            flash('Please login to continue')
+            return redirect(url_for('login'))
+    return inner
+
+def librarian_required(func):
+    def inner(*args, **kwargs):
+        if 'user_id' not in session:
+            flash('Please login to continue')
+            return redirect(url_for('login'))
+        user = User.query.get(session['user_id'])
+        if not user.is_librarian:
+            flash('You are not authorized to access this page')
+            return redirect(url_for('index'))
+        return func(*args, **kwargs)
+    return inner
+
+############################################
+
 @app.route('/profile')
+@auth_required
 def profile():
     user = User.query.get(session['user_id'])
-    if user:
-        return render_template('profile.html', user=user)
-    return render_template('login.html')
+    return render_template('profile.html', user=user)
+    
 
 @app.route('/profile',methods=['POST'])
+@auth_required
 def profile_post():
     username = request.form.get('username')
     cpassword = request.form.get('cpassword')
@@ -113,6 +119,7 @@ def profile_post():
         if new_username :
             flash('Username already exists')
             return redirect(url_for('profile'))
+        
     new_password_hash = generate_password_hash(password)
     user.username = username
     user.passhash = new_password_hash
@@ -122,15 +129,29 @@ def profile_post():
     return redirect(url_for('profile'))
 
 @app.route('/logout')
+@auth_required
 def logout():
     session.pop('user_id')
     return redirect(url_for('login'))
 ################################################
 
-@app.route('/librarian')
-def librarian():
-    # section = Section.query.all()
-    return render_template('librarian.html')
+# @app.route('/librarian')
+# @librarian_required
+# def librarian():
+#     return render_template('librarian.html')
 
+#########################
 
+@app.route('/')
+@auth_required
+def index():
+    user = User.query.get(session['user_id'])
+    if user.is_librarian:
+        return redirect(url_for('librarian'))
+    
+    sections = Section.query.all()
+    return render_template('index.html', sections=sections )
+################################
+
+###########################
 

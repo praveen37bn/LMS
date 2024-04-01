@@ -1,5 +1,6 @@
 from app import app
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import CheckConstraint
 from datetime import datetime
 from werkzeug.security import generate_password_hash
 
@@ -15,7 +16,7 @@ class User(db.Model):
 class Section(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), unique=True)
-    date_created = db.Column(db.Date, default=datetime.now, nullable=False)
+    date_created = db.Column(db.Date, default=datetime.today().strftime("%d-%m-%Y"))
     description = db.Column(db.Text)
 
 class Book(db.Model):
@@ -23,32 +24,33 @@ class Book(db.Model):
     name = db.Column(db.String(64), nullable=False)
     content = db.Column(db.Text)
     authors = db.Column(db.String(255))
-    date_issued = db.Column(db.DateTime)
-    return_date = db.Column(db.DateTime)
 
+    
     section_id = db.Column(db.Integer, db.ForeignKey('section.id'), nullable=False)
     section = db.relationship('Section', backref=db.backref('book', lazy=True))
 
+
 class BookRequest(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True,autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     book_id = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=False)
-    request_date = db.Column(db.Date, default=datetime.now, nullable=False)
+    request_date = db.Column(db.DateTime,default=datetime.utcnow)
+    requested_day=db.Column(db.Integer)
+    status=db.Column(db.String(30),default='Pending')
+    issued_date = db.Column(db.DateTime) 
     return_date = db.Column(db.DateTime)
-
+    
     user = db.relationship('User', backref=db.backref('bookrequest', lazy=True))
     book = db.relationship('Book', backref=db.backref('bookrequest', lazy=True))
-
 class Feedback(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     book_id = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=False)
-    rating = db.Column(db.Integer)
-    comment = db.Column(db.Text)
+    rating = db.Column(db.Integer,CheckConstraint('rating >= 0 AND rating <= 5'))
+    feedback = db.Column(db.Text)
 
     user = db.relationship('User', backref=db.backref('feedback', lazy=True))
     book = db.relationship('Book', backref=db.backref('feedback', lazy=True))
-
 class AccessLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
