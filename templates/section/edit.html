@@ -6,8 +6,8 @@
 
 {% block content %}
 
-this is edit page
-<!-- 
+
+
 <h1 class="display-1">
     Edit Section
 </h1>
@@ -17,10 +17,14 @@ this is edit page
         <label for="name" class="form-label">Section Name:</label>
         <input type="text" name="name" id="name" class="form-control" value="{{section.name}}"
         required>
+        
+        <label for="description" class="form-label">Section description:</label>
+        <input type="text" name="description" id="description" class="form-control" value="{{section.description}}" required>
     </div>
-    <button type="submit" class="btn btn-success">
+    <br>
+    <button type="submit" class="btn btn-warning">
         Update
     </button>
-</form> -->
+</form>
 
 {% endblock %}

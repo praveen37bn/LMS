@@ -187,26 +187,23 @@ def add_category_post():
 @app.route('/section/<int:id>/edit')
 @librarian_required
 def edit_section(id):
-    section = Section.query.filter_by(id).all()
-    return render_template('edit.html', section=section)
+    section = Section.query.get(id)
+    return render_template('section/edit.html', section=section)
 
 
+@app.route('/section/<int:id>/edit', methods=['POST'])
+@librarian_required
+def edit_section_post(id):
+    section = Section.query.get(id)
 
+    name = request.form.get('name')
+    description= request.form.get('description')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    section.name = name
+    section.description = description
+    db.session.commit()
+    flash('Category updated successfully')
+    return redirect(url_for('librarian'))
 
 @app.route('/section/<int:id>')
 @librarian_required
@@ -217,10 +214,27 @@ def show_section(id):
 
 
 
+
 @app.route('/section/delete')
 @librarian_required
 def delete_section():
     return render_template('section/delete.html')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ###########################
 
 
