@@ -1,29 +1,29 @@
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="/">Library</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-          {% if 'user_id' in session %}
-          <li class="nav-item">
-            <a class="nav-link"  href="{{ url_for('index') }}">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link"  href="{{ url_for('profile') }}">Profile</a>
-          </li>
-          
-          {% else %}
-          <li class="nav-item">
-            <a class="nav-link"  href="{{ url_for('login') }}">Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('register') }}">Register</a>
-          </li>
-          
-          {% endif %}
-        </ul>
-      </div>
-    </div>
-  </nav>
+{% extends 'layout.html' %}
+
+{% block title %}
+    Section: {{ section.name }}
+{% endblock %}
+
+{% block content %}
+    <h1 class="display-1">Books in Section: {{ section.name }}</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Book ID</th>
+                <th>Book Name</th>
+                <th>Content</th>
+                <th>Authors</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+            <tr>
+                <td>{{ book.id }}</td>
+                <td>{{ book.name }}</td>
+                <td>{{ book.content }}</td>
+                <td>{{ book.authors }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

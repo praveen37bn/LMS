@@ -78,6 +78,7 @@ def auth_required(func):
     return inner
 
 def librarian_required(func):
+    @wraps(func)
     def inner(*args, **kwargs):
         if 'user_id' not in session:
             flash('Please login to continue')
@@ -90,6 +91,9 @@ def librarian_required(func):
     return inner
 
 ############################################
+
+
+
 
 @app.route('/profile')
 @auth_required
@@ -134,11 +138,14 @@ def logout():
     session.pop('user_id')
     return redirect(url_for('login'))
 ################################################
+@app.route('/librarian')
+@librarian_required
+def librarian():
+    sections = Section.query.all()
+    section_names = [section.name for section in sections]
+    return render_template('librarian.html', sections=sections, section_names=section_names )
 
-# @app.route('/librarian')
-# @librarian_required
-# def librarian():
-#     return render_template('librarian.html')
+######################
 
 #########################
 
@@ -153,5 +160,72 @@ def index():
     return render_template('index.html', sections=sections )
 ################################
 
+@app.route('/section/add')
+@librarian_required
+def add_section():
+    return render_template('section/add.html')
+
+
+@app.route('/section/add', methods=['POST'])
+@librarian_required
+def add_category_post():
+    name = request.form.get('name')
+    description = request.form.get('description')
+
+    if not name:
+        flash('Please fill out all fields')
+        return redirect(url_for('add_section'))
+    
+    section = Section(name=name,description=description,)
+    db.session.add(section)
+    db.session.commit()
+
+    flash('Section added successfully')
+    return redirect(url_for('librarian'))
+    
+
+# @app.route('/section/<int:id>/edit')
+# @librarian_required
+# def edit_section(id):
+#     section = Section.query.filter_by(id).all()
+#     return render_template('edit.html', section=section)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@app.route('/section/<int:id>')
+@librarian_required
+def show_section(id):
+    section = Section.query.get(id)
+    books = Book.query.filter_by(section_id=id).all()
+    return render_template('section/show.html',books=books,section = section)
+
+
+
+@app.route('/section/delete')
+@librarian_required
+def delete_section():
+    return render_template('section/delete.html')
 ###########################
 
+
+@app.route('/book/add')
+@librarian_required
+def add_book():
+    return render_template('book/add.html')
+###########################

@@ -1,2 +1,52 @@
-this is librarian page 
-this is librarian page 
+{% extends 'layout.html' %}
+
+{% block title %}
+    Librarian Dashboard
+{% endblock %}
+
+{% block content %}
+
+
+
+<h1 class="display-1">Librarian Dashboard</h1>
+<a href="{{url_for('add_section')}}" class="btn btn-warning">
+    Add Section
+</a>
+
+<a href="{{url_for('add_section')}}" class="btn btn-warning">
+    See Requests
+</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Section ID</th>
+            <th>Section Name</th>
+            <th>Upload_Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for section in sections %}
+        <tr>
+            <td>{{section.id}}</td>
+            <td>{{section.name}}</td>
+            <td>{{section.date_created}}</td>
+            <td>
+                <a href="{{url_for('show_section', id=section.id)}}" class="btn btn-dark">
+                    Show Books
+                </a>
+                <a href="{{url_for('edit_section', id=section.id)}}" class="btn btn-secondary">
+                    
+                    Edit
+                </a>
+                <a href="{{url_for('delete_section', id=section.id)}}" class="btn btn-danger">
+                    Delete
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

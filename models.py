@@ -1,7 +1,7 @@
 from app import app
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import CheckConstraint
-from datetime import datetime
+from datetime import datetime 
 from werkzeug.security import generate_password_hash
 
 db = SQLAlchemy(app)
@@ -16,7 +16,7 @@ class User(db.Model):
 class Section(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), unique=True)
-    date_created = db.Column(db.Date, default=datetime.today().strftime("%d-%m-%Y"))
+    date_created = db.Column(db.Date,default=datetime.utcnow)
     description = db.Column(db.Text)
 
 class Book(db.Model):
@@ -24,7 +24,6 @@ class Book(db.Model):
     name = db.Column(db.String(64), nullable=False)
     content = db.Column(db.Text)
     authors = db.Column(db.String(255))
-
     
     section_id = db.Column(db.Integer, db.ForeignKey('section.id'), nullable=False)
     section = db.relationship('Section', backref=db.backref('book', lazy=True))
