@@ -184,11 +184,11 @@ def add_category_post():
     return redirect(url_for('librarian'))
     
 
-# @app.route('/section/<int:id>/edit')
-# @librarian_required
-# def edit_section(id):
-#     section = Section.query.filter_by(id).all()
-#     return render_template('edit.html', section=section)
+@app.route('/section/<int:id>/edit')
+@librarian_required
+def edit_section(id):
+    section = Section.query.filter_by(id).all()
+    return render_template('edit.html', section=section)
 
 
 
