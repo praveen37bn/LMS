@@ -168,7 +168,7 @@ def add_section():
 
 @app.route('/section/add', methods=['POST'])
 @librarian_required
-def add_category_post():
+def add_section_post():
     name = request.form.get('name')
     description = request.form.get('description')
 
@@ -202,7 +202,7 @@ def edit_section_post(id):
     section.name = name
     section.description = description
     db.session.commit()
-    flash('Category updated successfully')
+    flash('Section updated successfully')
     return redirect(url_for('librarian'))
 
 @app.route('/section/<int:id>')
@@ -223,9 +223,10 @@ def delete_section(id):
 @librarian_required
 def delete_section_post(id):
     section = Section.query.get(id)
+    Book.query.filter_by(section_id=id).delete()
     db.session.delete(section)
     db.session.commit()
-    flash('Category deleted successfully')
+    flash('Section deleted successfully')
     return redirect(url_for('librarian'))
 
 ###########################
@@ -250,10 +251,8 @@ def add_book_post():
     book = Book(name=name, authors=authors, section=section, content=content,section_id=section_id)
     db.session.add(book)
     db.session.commit()
-
     flash('Product added successfully')
     return redirect(url_for('show_section', id=section_id))
-
 
 
 @app.route('/book/<int:id>/show')
@@ -264,10 +263,37 @@ def show_book(id):
 
 
 
-@app.route('/book/edit')
+
+@app.route('/book/<int:id>/edit')
 @librarian_required
-def edit_book():
-    return render_template('book/edit.html')
+def edit_book(id):
+    sections = Section.query.all()
+    book = Book.query.get(id)
+    return render_template('book/edit.html', sections=sections, book=book)
+
+@app.route('/book/<int:id>/edit', methods=['POST'])
+@librarian_required
+def edit_book_post(id):
+    name = request.form.get('name')
+    section_id = request.form.get('section_id')
+    content = request.form.get('content')
+    authors = request.form.get('authors')
+
+
+    section = Section.query.get(section_id)
+
+    book = Book.query.get(id)
+    book.name = name
+    book.content = content
+    book.section = section
+    book.authors = authors
+    db.session.commit()
+
+    flash('Product edited successfully')
+    return redirect(url_for('show_section', id=section_id))
+
+
+
 
 
 

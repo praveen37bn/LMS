@@ -1,1 +1,48 @@
-this is edit.html
+{% extends 'layout.html' %}
+
+{% block title %}
+    Edit Book
+{% endblock %}
+
+{% block content %}
+
+<h1 class="display-1">
+    Edit Book
+</h1>
+
+<form action="{{url_for('edit_book_post', id=book.id)}}" method="post" class="form">
+    <div class="form-group">
+        <label for="name" class="form-label">Book Name:</label>
+        <input type="text" name="name" id="name" class="form-control" value="{{book.name}}" required>
+    </div>
+    <div class="form-group">
+        <label for="authors" class="form-label">Book Authors:</label>
+        <input type="text" name="authors" id="authors" value="{{book.authors}}" class="form-control" required>
+    </div>
+
+    <div class="form-group">
+        <label for="content" class="form-label">Book Content:</label>
+        <textarea name="content" id="content" value="{{book.content}}"  class="form-control"  required></textarea>
+    </div>
+
+
+    <div class="form-group">
+        <label for="section_id" class="form-label">Section:</label>
+        <select name="section_id" id="section_id" class="form-control" required>
+            {% for sect in sections %}
+            {% if sect.id == book.section_id %}
+                <option selected value="{{sect.id}}">{{sect.name}}</option>
+            {% else %}
+                <option value="{{sect.id}}">{{sect.name}}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+
+
+    <button type="submit" class="btn btn-warning">
+
+        Edit
+    </button>
+</form>
+
+{% endblock %}
