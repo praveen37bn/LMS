@@ -213,33 +213,71 @@ def show_section(id):
     return render_template('section/show.html',books=books,section = section)
 
 
-
-
-@app.route('/section/delete')
+@app.route('/section/<int:id>/delete')
 @librarian_required
-def delete_section():
-    return render_template('section/delete.html')
+def delete_section(id):
+    section = Section.query.get(id)
+    return render_template('section/delete.html', section=section)
+
+@app.route('/section/<int:id>/delete', methods=['POST'])
+@librarian_required
+def delete_section_post(id):
+    section = Section.query.get(id)
+    db.session.delete(section)
+    db.session.commit()
+    flash('Category deleted successfully')
+    return redirect(url_for('librarian'))
+
+###########################
+
+@app.route('/book/add/<int:section_id>')
+@librarian_required
+def add_book(section_id):
+    sections = Section.query.all()
+    section = Section.query.get(section_id)
+    return render_template('book/add.html', section=section, sections=sections)
+
+
+@app.route('/book/add/', methods=['POST'])
+@librarian_required
+def add_book_post():
+    name = request.form.get('name')
+    authors = request.form.get('authors')
+    content = request.form.get('content')
+    section_id = request.form.get('section_id')
+    section = Section.query.get(section_id)
+
+    book = Book(name=name, authors=authors, section=section, content=content,section_id=section_id)
+    db.session.add(book)
+    db.session.commit()
+
+    flash('Product added successfully')
+    return redirect(url_for('show_section', id=section_id))
 
 
 
+@app.route('/book/<int:id>/show')
+@librarian_required
+def show_book(id):
+    book = Book.query.get(id)
+    return render_template('book/show.html',book= book)
 
 
 
+@app.route('/book/edit')
+@librarian_required
+def edit_book():
+    return render_template('book/edit.html')
 
 
 
-
-
-
-
-
-
+@app.route('/book/delete')
+@librarian_required
+def delete_book():
+    return render_template('book/delete.html')
 
 ###########################
 
 
-@app.route('/book/add')
-@librarian_required
-def add_book():
-    return render_template('book/add.html')
-###########################
+
+

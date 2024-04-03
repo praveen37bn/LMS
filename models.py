@@ -7,26 +7,26 @@ from werkzeug.security import generate_password_hash
 db = SQLAlchemy(app)
 
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(32), unique=True, nullable=False)
-    passhash = db.Column(db.String(256), nullable=False)
-    name = db.Column(db.String(64), nullable=True)
-    is_librarian = db.Column(db.Boolean, nullable=False, default=False)
+    id = db.Column(db.Integer, primary_key=True)#
+    username = db.Column(db.String(32), unique=True, nullable=False)#
+    passhash = db.Column(db.String(256), nullable=False)#
+    name = db.Column(db.String(64), nullable=True)#
+    is_librarian = db.Column(db.Boolean, nullable=False, default=False)#
 
 class Section(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(32), unique=True)
-    date_created = db.Column(db.Date,default=datetime.utcnow)
-    description = db.Column(db.Text)
+    id = db.Column(db.Integer, primary_key=True)#
+    name = db.Column(db.String(32), unique=True)#
+    date_created = db.Column(db.Date,default=datetime.utcnow)#
+    description = db.Column(db.Text)#
 
 class Book(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)#
+    name = db.Column(db.String(64), nullable=False)#
     content = db.Column(db.Text)
     authors = db.Column(db.String(255))
-    
-    section_id = db.Column(db.Integer, db.ForeignKey('section.id'), nullable=False)
-    section = db.relationship('Section', backref=db.backref('book', lazy=True))
+    book_upload_date = db.Column(db.Date,default=datetime.utcnow)#
+    section_id = db.Column(db.Integer, db.ForeignKey('section.id'), nullable=False)#
+    section = db.relationship('Section', backref=db.backref('book', lazy=True))#
 
 
 class BookRequest(db.Model):

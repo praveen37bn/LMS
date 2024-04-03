@@ -1,0 +1,49 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Add Book
+{% endblock %}
+
+{% block content %}
+
+<h1 class="display-1">
+    Add Book
+</h1>
+
+<form action="{{url_for('add_book_post')}}" method="post" class="form">
+    <div class="form-group">
+        <label for="name" class="form-label">Book Name:</label>
+        <input type="text" name="name" id="name" class="form-control" required>
+    </div>
+   
+
+    <div class="form-group">
+        <label for="content" class="form-label">Book Content:</label>
+        <textarea name="content" id="content" class="form-control" required></textarea>
+    </div>
+    
+
+    <div class="form-group">
+        <label for="authors" class="form-label">Book Authors:</label>
+        <input type="text" name="authors" id="authors" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label for="section_id" class="form-label">Section:</label>
+        <select name="section_id" id="section_id" class="form-control" required>
+            {% for sect in sections %}
+            {% if sect.id == section.id %}
+                <option selected value="{{sect.id}}">{{sect.name}}</option>
+            {% else %}
+                <option value="{{sect.id}}">{{sect.name}}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+    <br>
+
+    <button type="submit" class="btn btn-warning">
+        
+        Add
+    </button>
+</form>
+
+{% endblock %}
