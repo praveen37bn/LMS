@@ -5,17 +5,49 @@
 {% endblock %}
 
 {% block content %}
-<h1>this is index.html for students</h1>
+    {% include 'searchbar.html' with context %}
+    <hr>
+    <div class="cateogies-list">
+        {% for section in books.section %}
+            <h2>{{ section.name}}</h2>
+            <div class="books">
+                {% for book in books %}
+                <div class="card" style="width: 18rem;">
 
-{% for section in sections %}
-            <h2>{{ section.name }}</h2>
-            <div class="products">
-                <!-- {% for book in section.book %}
+                    <div class="card-body">
+                      <h5 class="card-title">{{book.name}}</h5>
+                      <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                      <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                  </div>
+                        
+                        
                 
-            
-                {% endfor %} -->
+                
+                {% endfor %}
             </div>
         {% endfor %}
+    </div>
+
 
 
 {% endblock %}
+
+{% block style %}
+<style>
+    .cateogies-list {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .products {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .card {
+        margin: 10px;
+    }
+</style>
+{% endblock %}
+

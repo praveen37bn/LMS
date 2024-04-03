@@ -156,8 +156,18 @@ def index():
     if user.is_librarian:
         return redirect(url_for('librarian'))
     
-    sections = Section.query.all()
-    return render_template('index.html', sections=sections )
+    books = Book.query.all()
+    
+    sname = request.args.get('sname')
+    bname = request.args.get('bname')
+    dname = request.args.get('dname')
+
+    if sname:
+        pass
+    
+    return render_template('index.html', books=books, bname=bname, dname=dname, sname= sname)
+
+
 ################################
 
 @app.route('/section/add')
@@ -229,7 +239,7 @@ def delete_section_post(id):
     flash('Section deleted successfully')
     return redirect(url_for('librarian'))
 
-###########################
+#######################################################
 
 @app.route('/book/add/<int:section_id>')
 @librarian_required
@@ -293,14 +303,33 @@ def edit_book_post(id):
     return redirect(url_for('show_section', id=section_id))
 
 
-
-
-
-
-@app.route('/book/delete')
+@app.route('/book/<int:id>/delete')
 @librarian_required
-def delete_book():
-    return render_template('book/delete.html')
+def delete_book(id):
+    
+    book = Section.query.get(id)
+    if not book:
+        flash('Book does not exist')
+        return redirect(url_for('librarian'))
+    return render_template('book/delete.html', book=book)
+
+@app.route('/book/<int:id>/delete', methods=['POST'])
+@librarian_required
+def delete_book_post(id):
+    book = Book.query.get(id)
+    if not book:
+        flash('Book does not exist')
+        return redirect(url_for('librarian'))
+    section_id = Section.section.id
+    db.session.delete(book)
+    db.session.commit()
+
+    flash('Book deleted successfully')
+    return redirect(url_for('show_category', id=section_id))
+
+
+
+
 
 ###########################
 
