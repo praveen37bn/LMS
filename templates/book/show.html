@@ -8,22 +8,22 @@
 {% block style %}
     <style>
         .content-container {
-            width: 100%; /* Set width to 100% */
-            overflow-y: auto; /* Enable vertical scrolling if necessary */
+            width: 100%; 
+            overflow-y: auto; 
         }
 
         .content-text {
-            white-space: pre-wrap; /* Allow content to wrap */
-            word-wrap: break-word; /* Break long words to fit */
+            white-space: pre-wrap; 
+            word-wrap: break-word; 
         }
     </style>
 {% endblock %}
 
 {% block content %}
-    <h1>Book Name:{{ book.name }}</h1>
-    <p><strong>Book Authors:</strong> {{ book.authors }}</p>
+    <h1>Book Name:   {{ book.name }}</h1>
+    <p><strong>Book Authors:   </strong> {{ book.authors }}</p>
     <div class="content-container">
-    <p><strong>Content:</strong></p>
+    <p><strong>Content:  </strong></p>
         <pre class="content-text">{{ book.content }}</pre>
     </div>
 {% endblock %}

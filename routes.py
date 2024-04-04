@@ -156,7 +156,7 @@ def index():
     if user.is_librarian:
         return redirect(url_for('librarian'))
     
-    books = Book.query.all()
+    sections = Section.query.all()
     
     sname = request.args.get('sname')
     bname = request.args.get('bname')
@@ -165,7 +165,7 @@ def index():
     if sname:
         pass
     
-    return render_template('index.html', books=books, bname=bname, dname=dname, sname= sname)
+    return render_template('index.html', sections=sections, bname=bname, dname=dname, sname= sname)
 
 
 ################################
@@ -233,7 +233,6 @@ def delete_section(id):
 @librarian_required
 def delete_section_post(id):
     section = Section.query.get(id)
-    Book.query.filter_by(section_id=id).delete()
     db.session.delete(section)
     db.session.commit()
     flash('Section deleted successfully')
@@ -307,7 +306,7 @@ def edit_book_post(id):
 @librarian_required
 def delete_book(id):
     
-    book = Section.query.get(id)
+    book = Book.query.get(id)
     if not book:
         flash('Book does not exist')
         return redirect(url_for('librarian'))
@@ -320,12 +319,12 @@ def delete_book_post(id):
     if not book:
         flash('Book does not exist')
         return redirect(url_for('librarian'))
-    section_id = Section.section.id
+    section_id = book.section.id
     db.session.delete(book)
     db.session.commit()
 
     flash('Book deleted successfully')
-    return redirect(url_for('show_category', id=section_id))
+    return redirect(url_for('show_section', id=section_id))
 
 
 

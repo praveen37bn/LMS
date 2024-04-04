@@ -18,7 +18,7 @@ class Section(db.Model):
     name = db.Column(db.String(32), unique=True)#
     date_created = db.Column(db.Date,default=datetime.utcnow)#
     description = db.Column(db.Text)#
-
+    books = db.relationship('Book', backref='section', lazy=True,cascade='all, delete-orphan')
 
 class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)#
@@ -27,7 +27,7 @@ class Book(db.Model):
     authors = db.Column(db.String(255))#
     book_upload_date = db.Column(db.Date,default=datetime.utcnow)#
     section_id = db.Column(db.Integer, db.ForeignKey('section.id'), nullable=False)#
-    section = db.relationship('Section', backref=db.backref('book', lazy=True) )#
+    # section = db.relationship('Section', backref=db.backref('book', lazy=True) )#
 
 
 class BookRequest(db.Model):

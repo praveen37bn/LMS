@@ -1,1 +1,21 @@
-this delete.html  it needs to update for run
+
+{% extends 'layout.html' %}
+
+{% block title %}
+    Delete Book
+{% endblock %}
+
+{% block content %}
+
+<h1 class="display-1">
+    Delete Book
+</h1>
+<p class="f-3">Are you sure you want to delete {{book.name}}?</p>
+
+<form action="" method="post" class="form">
+    <button type="submit" class="btn btn-danger">
+        Delete
+    </button>
+</form>
+
+{% endblock %}

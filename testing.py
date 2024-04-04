@@ -1,22 +1,24 @@
 
-@app.route('/category/<int:id>/delete')
+@app.route('/product/<int:id>/delete')
 @admin_required
-def delete_category(id):
-    category = Category.query.get(id)
-    if not category:
-        flash('Category does not exist')
+def delete_product(id):
+    product = Product.query.get(id)
+    if not product:
+        flash('Product does not exist')
         return redirect(url_for('admin'))
-    return render_template('category/delete.html', category=category)
+    return render_template('product/delete.html', product=product)
 
-@app.route('/category/<int:id>/delete', methods=['POST'])
+@app.route('/product/<int:id>/delete', methods=['POST'])
 @admin_required
-def delete_category_post(id):
-    category = Category.query.get(id)
-    if not category:
-        flash('Category does not exist')
+def delete_product_post(id):
+    product = Product.query.get(id)
+    if not product:
+        flash('Product does not exist')
         return redirect(url_for('admin'))
-    db.session.delete(category)
+    category_id = product.category.id
+    db.session.delete(product)
     db.session.commit()
 
-    flash('Category deleted successfully')
-    return redirect(url_for('admin'))
+    flash('Product deleted successfully')
+    return redirect(url_for('show_category', id=category_id))
+
