@@ -1,0 +1,32 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<h1 class="display-1">My Books</h1>
+<hr>
+
+<h3>Currect</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Book Name</th>
+            <th>Section</th>
+            <th>Book Author</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for mybook in mybooks %}
+        <tr>
+            <td>{{mybook.book.name}}</td>
+            <td>{{mybook.book.section.name}}</td>
+            <td>{{mybook.book.authors}}</td>
+            <td>
+                <span style="background-color: pink;">{{mybook.status}}</span>
+
+
+            </td>
+        </tr>
+        {% endfor %}
+</table>
+{% endblock %}

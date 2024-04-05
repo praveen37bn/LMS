@@ -165,7 +165,7 @@ def index():
     if sname:
         pass
     
-    return render_template('index.html', sections=sections, bname=bname, dname=dname, sname= sname)
+    return render_template('index.html', user=user.is_librarian, sections=sections, bname=bname, dname=dname, sname= sname)
 
 
 ################################
@@ -326,12 +326,49 @@ def delete_book_post(id):
     flash('Book deleted successfully')
     return redirect(url_for('show_section', id=section_id))
 
-
-
-
-
 ###########################
 
+@app.route('/mybook')
+@auth_required
+def mybook():
+    mybooks = BookRequest.query.filter_by(user_id=session['user_id']).all()
+    return render_template('mybook.html', mybooks=mybooks)
 
 
+@app.route('/book_request')
+@auth_required
+def book_request():
+    request = BookRequest.query.filter_by(user_id=session['user_id']).all()
+    return render_template('requests/send_req.html',request= request)
 
+###################
+@app.route('/book_request,<int:book_id>', methods=['POST'])
+@auth_required
+def book_request_post(book_id):
+    days =  int(request.form.get('requested_day'))
+    user_id = session['user_id']
+    
+    if days > 20 and days < 0 :
+        flash('You can request max 20 days')
+        return redirect(url_for('index'))
+
+    check_exist = BookRequest.query.filter_by(user_id=user_id, book_id=book_id).first()
+
+    if check_exist:
+        flash('You have already requested for this book')
+        return redirect(url_for('index'))
+
+        
+    new_request = BookRequest(user_id=user_id, book_id=book_id, requested_day=days)
+    db.session.add(new_request)
+    db.session.commit()
+
+    flash('Book request sent successfully')
+    return redirect(url_for('index'))
+
+
+@app.route('/see_requests')
+@librarian_required
+def see_requests():
+    requests = BookRequest.query.all()
+    return render_template('requests/see_req.html', requests=requests)

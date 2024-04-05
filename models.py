@@ -27,11 +27,12 @@ class Book(db.Model):
     authors = db.Column(db.String(255))#
     book_upload_date = db.Column(db.Date,default=datetime.utcnow)#
     section_id = db.Column(db.Integer, db.ForeignKey('section.id'), nullable=False)#
-    # section = db.relationship('Section', backref=db.backref('book', lazy=True) )#
+
+    bookrequest = db.relationship('BookRequest', backref='book', lazy=True, cascade='all, delete-orphan')#
 
 
 class BookRequest(db.Model):
-    id = db.Column(db.Integer, primary_key=True,autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     book_id = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=False)
     request_date = db.Column(db.DateTime,default=datetime.utcnow)
@@ -40,8 +41,7 @@ class BookRequest(db.Model):
     issued_date = db.Column(db.DateTime) 
     return_date = db.Column(db.DateTime)
     
-    user = db.relationship('User', backref=db.backref('bookrequest', lazy=True))
-    book = db.relationship('Book', backref=db.backref('bookrequest', lazy=True))
+
 class Feedback(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
