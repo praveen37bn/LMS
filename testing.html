@@ -1,88 +1,38 @@
-{% extends 'layout.html' %}
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">Library</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
 
-{% block title %}
-    {{ book.name }} - Book Content
-{% endblock %}
+          {% if 'user_id' in session %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('profile') }}">Profile</a>
+            </li>
 
-{% block style %}
-    <style>{% extends 'layout.html' %}
+            {% if is_librarian %}
+              <!-- Only render "My Books" link for non-librarian users -->
+            {% else %}
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('mybook') }}">My Books</a>
+              </li>
+            {% endif %}
 
-        {% block content %}
-        <h1 class="display-1">Cart</h1>
-        <hr>
-        
-        {% if carts|length > 0 %}
-            
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Product Name</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                    <th>Subtotal</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for cart in carts %}
-                <tr>
-                    <td>{{cart.product.name}}</td>
-                    <td>{{cart.quantity}}</td>
-                    <td>{{cart.product.price}}</td>
-                    <td>{{cart.quantity * cart.product.price}}</td>
-                    <td>
-                        <form action="{{url_for('delete_cart', id=cart.id)}}" method="post">
-                            <button class="btn btn-danger">
-                                <i class="fas fa-trash"></i>
-                                Remove
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="3"><strong>Total</strong></td>
-                    <td>{{total}}</td>
-                    <td>
-                        <form action="{{url_for('checkout')}}" method="post">
-                            <button class="btn btn-success">
-                                <i class="fas fa-shopping-cart"></i>
-                                Checkout
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-            </tfoot>
-        </table>
-        {% else %}
-            <div class="alert alert-info">
-                <h2>Cart is Empty</h2>
-            </div>
-        {% endif %}
-        {% endblock %}
-        
-        {% block style %}
-        
-        {% endblock %}
-        .content-container {
-            width: 100%; /* Set width to 100% */
-            overflow-y: auto; /* Enable vertical scrolling if necessary */
-        }
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+            </li>
+          {% endif %}
 
-        .content-text {
-            white-space: pre-wrap; /* Allow content to wrap */
-            word-wrap: break-word; /* Break long words to fit */
-        }
-    </style>
-{% endblock %}
-
-{% block content %}
-    <h1>{{ book.name }}</h1>
-    <p>Authors: {{ book.authors }}</p>
-    <div class="content-container">
-        <p>Content:</p>
-        <pre class="content-text">{{ book.content }}</pre>
+        </ul>
+      </div>
     </div>
-{% endblock %}
+</nav>

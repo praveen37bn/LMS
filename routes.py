@@ -165,7 +165,7 @@ def index():
     if sname:
         pass
     
-    return render_template('index.html', user=user.is_librarian, sections=sections, bname=bname, dname=dname, sname= sname)
+    return render_template('index.html',user = user.is_librarian, sections=sections, bname=bname, dname=dname, sname= sname)
 
 
 ################################
