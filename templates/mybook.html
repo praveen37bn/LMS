@@ -1,10 +1,49 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-<h1 class="display-1">My Books</h1>
+<h1 class="display-5">My Books</h1>
 <hr>
 
+
 <h3>Currect</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Book Name</th>
+            <th>Section</th>
+            <th>Book Author</th>
+            <th>Status</th>
+            <th>read book</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for mybook in mybooks %}
+        {%if mybook.status == 'Pending'%}
+        <tr>
+            <td>{{mybook.book.name}}</td>
+            <td>{{mybook.book.section.name}}</td>
+            <td>{{mybook.book.authors}}</td>
+            <td>
+                <span style="background-color: rgb(137, 137, 188);">{{mybook.status}}</span>
+            <td>
+                    
+                <form action="{{ url_for('myrequest_return', book_request_id=mybook.id) }}" method="post">
+                <button type="submit" class="btn btn-danger">Return Request</button>
+                </form>
+                {% endif %}
+                </td>
+
+
+
+            </td>
+        </tr>
+        {% endfor %}
+</table>
+
+
+
+
+<h3>Completed</h3>
 
 <table class="table">
     <thead>
@@ -13,18 +52,24 @@
             <th>Section</th>
             <th>Book Author</th>
             <th>Status</th>
+            <th>read book</th>
         </tr>
     </thead>
     <tbody>
         {% for mybook in mybooks %}
+        {%if mybook.status == 'Granted'%}
         <tr>
             <td>{{mybook.book.name}}</td>
             <td>{{mybook.book.section.name}}</td>
             <td>{{mybook.book.authors}}</td>
             <td>
-                <span style="background-color: pink;">{{mybook.status}}</span>
-
-
+                    <span style="background-color: rgb(23, 212, 35);">{{mybook.status}}</span>
+                <td>
+                        <form action="{{ url_for('mybook_read', book_request_id=mybook.id) }}" method="post">
+                            <button type="submit" class="btn btn-info">Read Book</button>
+                        </form>
+                    {% endif %}
+                </td>
             </td>
         </tr>
         {% endfor %}

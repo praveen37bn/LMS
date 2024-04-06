@@ -3,6 +3,7 @@ from app import app
 from functools import wraps
 from models import db, User,Book,BookRequest,Feedback,AccessLog,Section
 from werkzeug.security import generate_password_hash ,check_password_hash
+from datetime import datetime ,timedelta
 
 
 
@@ -334,6 +335,31 @@ def mybook():
     mybooks = BookRequest.query.filter_by(user_id=session['user_id']).all()
     return render_template('mybook.html', mybooks=mybooks)
 
+@app.route('/read_book/<int:book_request_id>', methods=['POST'])
+@auth_required  
+def mybook_read(book_request_id):
+    book_request = BookRequest.query.get(book_request_id)
+    if book_request and book_request.status == 'Granted':
+        book = book_request.book
+        return render_template('book/show.html', book=book)
+    flash('Access denied Book request not granted.')
+    return redirect(url_for('mybook'))  
+
+
+@app.route('/return_request/<int:book_request_id>', methods=['POST'])
+@auth_required 
+def myrequest_return(book_request_id):
+    mybook_request = BookRequest.query.get(book_request_id)
+    if mybook_request and mybook_request.status == 'Pending':
+        mybook_request.status = 'Rejected'
+        if mybook_request.status== 'Rejected':
+            db.session.delete(mybook_request)
+        db.session.commit()
+        flash(' Book request return ')
+    else:
+        flash('Invalid book return request')
+    return redirect(url_for('mybook'))  
+
 
 @app.route('/book_request')
 @auth_required
@@ -366,9 +392,54 @@ def book_request_post(book_id):
     flash('Book request sent successfully')
     return redirect(url_for('index'))
 
-
 @app.route('/see_requests')
 @librarian_required
 def see_requests():
     requests = BookRequest.query.all()
-    return render_template('requests/see_req.html', requests=requests)
+    user_id = session.get('user_id')
+    user = User.query.get(user_id)
+
+    return render_template('requests/see_req.html', requests=requests ,user = user)
+
+
+#################################
+
+
+@app.route('/process_request/<int:request_id>/<action>', methods=['POST'])
+@librarian_required
+def process_request(request_id, action):
+    book_request = BookRequest.query.get(request_id)
+
+    if not book_request:
+        flash('Book request not found.')  
+        return redirect(url_for('see_requests'))
+    if action == 'grant':
+        book_request.issued_date = datetime.utcnow()
+
+        if book_request.requested_day:
+            book_request.access_expiry = book_request.issued_date + timedelta(days=book_request.requested_day)
+        book_request.status = 'Granted'
+    elif action == 'reject':
+        # Revoke access
+        book_request.status = 'Rejected'
+        book_request.issued_date = None
+        book_request.access_expiry = None
+
+    if book_request.status == 'Rejected':
+        db.session.delete(book_request)  # Delete the rejected book request
+
+    db.session.commit()
+    flash('Request processed successfully')
+    return redirect(url_for('see_requests'))
+
+
+
+
+
+
+
+
+
+
+
+

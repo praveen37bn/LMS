@@ -6,44 +6,84 @@
 
 
 
-
 {% block content %}
 
-<h1 class="display-1">Book Requests</h1>
+<h1 class="display-5">Book Requests</h1>
+<h3>Book Requests</h3>
+
 
 <table class="table">
     <thead>
         <tr>
-            <th>Request ID</th>
-            <th>User</th>
             <th>Book</th>
             <th>Request Date</th>
             <th>No of days</th>
-            <th>grant days</th>
+            <th>Status</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
         {% for request in requests %}
+        {% if request.status == 'Pending' %}
+        
         <tr>
-            <td>{{ request.id }}</td>
-            <td>{{ request.book.username }}</td>
             <td>{{ request.book.name }}</td>
             <td>{{ request.request_date }}</td>
             <td>{{ request.requested_day }}</td>
-            <td> <input type="number" value="{{ request.requested_day }}" style="width: 50px;" > </td>
             <td>
-                <a href="#" class="btn btn-success">
-                    Accept
-                </a>
-                <a href="#" class="btn btn-danger">
-                    Reject
-                </a>
-
+                <span style="background-color: rgb(255, 244, 127);">{{request.status}}</span></td>
+            <td>
+                <div class="btn-group">
+                    <form action="{{ url_for('process_request', request_id=request.id, action='grant') }}" method="post">
+                        <button type="submit" class="btn btn-success">Grant</button>
+                    </form>
+                    <form action="{{ url_for('process_request', request_id=request.id, action='reject') }}" method="post">
+                        <button type="submit" class="btn btn-danger">Reject</button>
+                    </form>
+                </div>
             </td>
         </tr>
+        {% endif %}
         {% endfor %}
     </tbody>
 </table>
 
+
+
+
+
+<h3>Book Granted</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Book</th>
+            <th>Request Date</th>
+            <th>No of days</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for request in requests %}
+        {% if request.status == 'Granted' %}
+        
+        <tr>
+            <td>{{ request.book.name }}</td>
+            <td>{{ request.issued_date}}</td>
+            <td>{{ request.requested_day }}</td>
+            <td>
+                <span style="background-color: rgb(255, 244, 127);">{{request.status}}</span></td>
+            <td>
+                <div class="btn-group">
+                    <form action="{{ url_for('process_request', request_id=request.id, action='reject') }}" method="post">
+                        <button type="submit" class="btn btn-danger">Revoke</button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}

@@ -1,7 +1,7 @@
 from app import app
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import CheckConstraint
-from datetime import datetime 
+from datetime import datetime ,timedelta
 from werkzeug.security import generate_password_hash
 
 db = SQLAlchemy(app)
@@ -32,15 +32,21 @@ class Book(db.Model):
 
 
 class BookRequest(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    book_id = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=False)
-    request_date = db.Column(db.DateTime,default=datetime.utcnow)
-    requested_day=db.Column(db.Integer)
-    status=db.Column(db.String(30),default='Pending')
+    id = db.Column(db.Integer, primary_key=True)#
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)#
+    book_id = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=False)#
+    request_date = db.Column(db.DateTime,default=datetime.utcnow)#
+    requested_day=db.Column(db.Integer)#
+    status=db.Column(db.String(30),default='Pending')#
     issued_date = db.Column(db.DateTime) 
     return_date = db.Column(db.DateTime)
-    
+    access_expiry = db.Column(db.DateTime)
+
+
+    def set_access_expiry(self):
+        self.access_expiry = self.issued_date + timedelta(days=self.requested_day)
+
+
 
 class Feedback(db.Model):
     id = db.Column(db.Integer, primary_key=True)
