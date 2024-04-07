@@ -17,11 +17,14 @@
 <body>
     
     {% include 'navbar.html'   %}
+    {% include 'messages.html' with context %}
     <div class="container">
-    {% block content %}
-        
-    {% endblock %}
+                {% block content %}
+                    
+                {% endblock %}
     </div>
+
+
     {% block script %}
         
     {% endblock %}

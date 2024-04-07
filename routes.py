@@ -142,12 +142,10 @@ def logout():
 @app.route('/librarian')
 @librarian_required
 def librarian():
+    user = User.query.get(session['user_id'])
     sections = Section.query.all()
     section_names = [section.name for section in sections]
-    return render_template('librarian.html', sections=sections, section_names=section_names )
-
-######################
-
+    return render_template('librarian.html', sections=sections, section_names=section_names,user= user )
 #########################
 
 @app.route('/')
@@ -158,23 +156,33 @@ def index():
         return redirect(url_for('librarian'))
     
     sections = Section.query.all()
-    
-    sname = request.args.get('sname')
-    bname = request.args.get('bname')
-    dname = request.args.get('dname')
+    for section in sections:
+        for book in section.books:
+            ratings= Feedback.query.filter_by(book_id=book.id).all()
+            if ratings:
+                valid_ratings = [rating.rating for rating in ratings if rating.rating is not None]
+                avg_rating = sum(valid_ratings)/len(valid_ratings)
+                book.book_rating = avg_rating
+
+
+    sname = request.args.get('sname') or ''
+    bname = request.args.get('bname') or ''
+    aname = request.args.get('aname')
 
     if sname:
-        pass
-    
-    return render_template('index.html',user = user.is_librarian, sections=sections, bname=bname, dname=dname, sname= sname)
+        sections = Section.query.filter(Section.name.ilike(f'%{sname}%')).all()
 
+
+    db.session.commit()
+    return render_template('index.html',user = user, sections=sections, bname=bname, aname=aname, sname= sname)
 
 ################################
 
 @app.route('/section/add')
 @librarian_required
 def add_section():
-    return render_template('section/add.html')
+    user = User.query.get(session['user_id'])
+    return render_template('section/add.html',user=user)
 
 
 @app.route('/section/add', methods=['POST'])
@@ -198,8 +206,9 @@ def add_section_post():
 @app.route('/section/<int:id>/edit')
 @librarian_required
 def edit_section(id):
+    user = User.query.get(session['user_id'])
     section = Section.query.get(id)
-    return render_template('section/edit.html', section=section)
+    return render_template('section/edit.html', section=section,user=user)
 
 
 @app.route('/section/<int:id>/edit', methods=['POST'])
@@ -219,16 +228,18 @@ def edit_section_post(id):
 @app.route('/section/<int:id>')
 @librarian_required
 def show_section(id):
+    user = User.query.get(session['user_id'])
     section = Section.query.get(id)
     books = Book.query.filter_by(section_id=id).all()
-    return render_template('section/show.html',books=books,section = section)
+    return render_template('section/show.html',books=books,section = section,user=user)
 
 
 @app.route('/section/<int:id>/delete')
 @librarian_required
 def delete_section(id):
+    user = User.query.get(session['user_id'])
     section = Section.query.get(id)
-    return render_template('section/delete.html', section=section)
+    return render_template('section/delete.html', section=section,user=user)
 
 @app.route('/section/<int:id>/delete', methods=['POST'])
 @librarian_required
@@ -244,9 +255,10 @@ def delete_section_post(id):
 @app.route('/book/add/<int:section_id>')
 @librarian_required
 def add_book(section_id):
+    user = User.query.get(session['user_id'])
     sections = Section.query.all()
     section = Section.query.get(section_id)
-    return render_template('book/add.html', section=section, sections=sections)
+    return render_template('book/add.html', section=section, sections=sections,user=user)
 
 
 @app.route('/book/add/', methods=['POST'])
@@ -268,8 +280,9 @@ def add_book_post():
 @app.route('/book/<int:id>/show')
 @librarian_required
 def show_book(id):
+    user = User.query.get(session['user_id'])
     book = Book.query.get(id)
-    return render_template('book/show.html',book= book)
+    return render_template('book/show.html',book= book,user=user)
 
 
 
@@ -277,9 +290,10 @@ def show_book(id):
 @app.route('/book/<int:id>/edit')
 @librarian_required
 def edit_book(id):
+    user = User.query.get(session['user_id'])
     sections = Section.query.all()
     book = Book.query.get(id)
-    return render_template('book/edit.html', sections=sections, book=book)
+    return render_template('book/edit.html', sections=sections, book=book,user=user)
 
 @app.route('/book/<int:id>/edit', methods=['POST'])
 @librarian_required
@@ -288,7 +302,6 @@ def edit_book_post(id):
     section_id = request.form.get('section_id')
     content = request.form.get('content')
     authors = request.form.get('authors')
-
 
     section = Section.query.get(section_id)
 
@@ -306,12 +319,12 @@ def edit_book_post(id):
 @app.route('/book/<int:id>/delete')
 @librarian_required
 def delete_book(id):
-    
+    user = User.query.get(session['user_id'])
     book = Book.query.get(id)
     if not book:
         flash('Book does not exist')
         return redirect(url_for('librarian'))
-    return render_template('book/delete.html', book=book)
+    return render_template('book/delete.html', book=book,user=user)
 
 @app.route('/book/<int:id>/delete', methods=['POST'])
 @librarian_required
@@ -332,8 +345,9 @@ def delete_book_post(id):
 @app.route('/mybook')
 @auth_required
 def mybook():
+    user = User.query.get(session['user_id'])
     mybooks = BookRequest.query.filter_by(user_id=session['user_id']).all()
-    return render_template('mybook.html', mybooks=mybooks)
+    return render_template('mybook.html', mybooks=mybooks,user=user)
 
 @app.route('/read_book/<int:book_request_id>', methods=['POST'])
 @auth_required  
@@ -361,13 +375,29 @@ def myrequest_return(book_request_id):
     return redirect(url_for('mybook'))  
 
 
+@app.route('/mybook_return/<int:book_id>',methods=['POST'])
+@auth_required
+def myreqeust_return(book_id):
+    book = BookRequest.query.get(book_id)
+    book.return_date = datetime.utcnow()
+    book.status = 'Complete'
+    db.session.commit()
+    flash('book Returnd successfully')
+    return redirect(url_for('mybook'))
+
+
+
+
+
+
 @app.route('/book_request')
 @auth_required
 def book_request():
+    user = User.query.get(session['user_id'])
     request = BookRequest.query.filter_by(user_id=session['user_id']).all()
-    return render_template('requests/send_req.html',request= request)
+    return render_template('requests/send_req.html',request= request,user=user)
 
-###################
+
 @app.route('/book_request,<int:book_id>', methods=['POST'])
 @auth_required
 def book_request_post(book_id):
@@ -415,10 +445,14 @@ def process_request(request_id, action):
         return redirect(url_for('see_requests'))
     if action == 'grant':
         book_request.issued_date = datetime.utcnow()
-
+        book_request.status = 'Granted'
         if book_request.requested_day:
             book_request.access_expiry = book_request.issued_date + timedelta(days=book_request.requested_day)
-        book_request.status = 'Granted'
+        
+        if book_request.access_expiry < datetime.utcnow():
+            book_request.status = 'Expired'
+            book_request.return_date = book_request.access_expiry
+
     elif action == 'reject':
         # Revoke access
         book_request.status = 'Rejected'
@@ -426,7 +460,7 @@ def process_request(request_id, action):
         book_request.access_expiry = None
 
     if book_request.status == 'Rejected':
-        db.session.delete(book_request)  # Delete the rejected book request
+        db.session.delete(book_request)  
 
     db.session.commit()
     flash('Request processed successfully')
@@ -439,8 +473,9 @@ def process_request(request_id, action):
 @app.route('/myfeedback/<int:book_id>')
 @auth_required
 def myfeedback(book_id):
+    user = User.query.get(session['user_id'])
     book_request = BookRequest.query.get(book_id)
-    return render_template('feedback.html', book_request=book_request)
+    return render_template('feedback.html', book_request=book_request,user=user)
 
 
 @app.route('/myfeedback/<int:book_id>', methods=['POST'])

@@ -6,17 +6,18 @@
 
 {% block content %}
     {% include 'searchbar.html' with context %}
-
     <hr>
     <div class="sections-list">
         {% for section in sections %}
             <h2>{{ section.name }} </h2> 
             <div class="books">
                 {% for book in section.books %}
+                    {% if (not bname or bname.lower() in book.name.lower()) and (not aname or aname.lower() in book.authors.lower()) %}
                     <div class="card" style="width: 18rem;">
                         <div class="card-body">
                             <h5 class="card-title">{{ book.name }}</h5>
-                            <p>  <b>Author:</b>   {{ book.authors }}</p>
+                            <p>  <b>Author:</b>   {{ book.authors }}</p>                            
+                            <p class="card-text"> Rating:   {{ book.book_rating }}</p>
                             <p class="card-text"> Upload Date : {{book.book_upload_date}}</p>
 
                             <form action="{{url_for('book_request_post', book_id = book.id) }}" method="post">
@@ -31,6 +32,7 @@
                             
                         </div>
                     </div>
+                    {%endif%}
                 {% endfor %}
             </div>
         {% endfor %}

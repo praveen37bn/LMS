@@ -26,9 +26,9 @@ class Book(db.Model):
     content = db.Column(db.Text)#
     authors = db.Column(db.String(255))#
     book_upload_date = db.Column(db.Date,default=datetime.utcnow)#
-
+    book_rating = db.Column(db.Float) 
+    
     section_id = db.Column(db.Integer, db.ForeignKey('section.id'), nullable=False)#
-
     bookrequest = db.relationship('BookRequest', backref='book', lazy=True, cascade='all, delete-orphan')#
 
 
@@ -43,9 +43,6 @@ class BookRequest(db.Model):
     return_date = db.Column(db.DateTime)
     access_expiry = db.Column(db.DateTime)
 
-
-    def set_access_expiry(self):
-        self.access_expiry = self.issued_date + timedelta(days=self.requested_day)
 
 
 
