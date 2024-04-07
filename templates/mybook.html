@@ -5,7 +5,7 @@
 <hr>
 
 
-<h3>Currect</h3>
+<h3>Current</h3>
 <table class="table">
     <thead>
         <tr>
@@ -32,14 +32,10 @@
                 </form>
                 {% endif %}
                 </td>
-
-
-
             </td>
         </tr>
         {% endfor %}
 </table>
-
 
 
 
@@ -63,13 +59,19 @@
             <td>{{mybook.book.section.name}}</td>
             <td>{{mybook.book.authors}}</td>
             <td>
-                    <span style="background-color: rgb(23, 212, 35);">{{mybook.status}}</span>
-                <td>
-                        <form action="{{ url_for('mybook_read', book_request_id=mybook.id) }}" method="post">
-                            <button type="submit" class="btn btn-info">Read Book</button>
-                        </form>
-                    {% endif %}
-                </td>
+                <span style="background-color: rgb(23, 212, 35);">{{mybook.status}}</span>
+            <td>
+            <div class="btn-group">
+                <form action="{{ url_for('mybook_read', book_request_id=mybook.id) }}" method="post">
+                    <button type="submit" class="btn btn-info">Read Book</button>
+                </form>
+
+                <form action="{{url_for('myfeedback', book_id = mybook.id)}}">
+                    <button type="submit" class="btn btn-secondary"> feedback</button>
+                </form>
+
+            </div>
+            {% endif %}
             </td>
         </tr>
         {% endfor %}

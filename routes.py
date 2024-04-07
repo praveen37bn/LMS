@@ -433,6 +433,40 @@ def process_request(request_id, action):
     return redirect(url_for('see_requests'))
 
 
+################################################################
+
+
+@app.route('/myfeedback/<int:book_id>')
+@auth_required
+def myfeedback(book_id):
+    book_request = BookRequest.query.get(book_id)
+    return render_template('feedback.html', book_request=book_request)
+
+
+@app.route('/myfeedback/<int:book_id>', methods=['POST'])
+@auth_required
+def myfeedback_post(book_id):
+    book_request = BookRequest.query.get(book_id)
+
+    if not book_request:
+        flash('Book request not found')
+        return redirect(url_for('mybook'))
+
+    if request.method == 'POST':
+        rating = request.form.get('rating')
+        feedback_text = request.form.get('feedback')
+
+        feedback = Feedback(user_id=session['user_id'],book_id=book_request.book_id,rating=rating,feedback=feedback_text)
+        db.session.add(feedback)
+        db.session.commit()
+
+        flash('Feedback sent successfully.')
+        return redirect(url_for('mybook'))
+
+    return render_template('feedback.html', book_request=book_request)
+
+
+
 
 
 
