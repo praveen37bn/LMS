@@ -23,7 +23,7 @@
         {% for section in sections %}
         <tr>
             <td>{{section.name}}</td>
-            <td>{{section.date_created}}</td>
+            <td>{{section.date_created.strftime('%Y-%m-%d')}}</td>
             <td>
                 <a href="{{url_for('show_section', id=section.id)}}" class="btn btn-dark">
                     Show Books

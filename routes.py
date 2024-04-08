@@ -439,7 +439,7 @@ def see_requests():
     user_id = session.get('user_id')
     user = User.query.get(user_id)
 
-    return render_template('requests/see_req.html', requests=requests ,user = user)
+    return render_template('see_req.html', requests=requests ,user = user)
 
 #################################
 
@@ -456,16 +456,16 @@ def process_request(request_id, action):
         book_request.status = 'Granted'
         if book_request.requested_day:
             book_request.access_expiry = book_request.issued_date + timedelta(days=book_request.requested_day)
-        
-    if book_request.access_expiry< datetime.utcnow():
-        book_request.status = 'Expired'
-        book_request.return_date = book_request.access_expiry
-
     elif action == 'reject':
-        # Revoke access
         book_request.status = 'Rejected'
         book_request.issued_date = None
         book_request.access_expiry = None
+
+    if book_request.access_expiry and book_request.access_expiry < datetime.utcnow():        
+        book_request.status = 'Expired'
+        book_request.return_date = book_request.access_expiry
+
+    
 
     if book_request.status == 'Rejected':
         db.session.delete(book_request)  
@@ -510,6 +510,7 @@ def myfeedback_post(book_id):
 
 
 
+#######################################################
 
 
 
@@ -517,6 +518,17 @@ def myfeedback_post(book_id):
 
 
 
+
+@app.route('/book_detail/<int:book_id>')
+@auth_required
+def book_detail(book_id):
+    user = User.query.get(session['user_id'])
+    book = Book.query.get_or_404(book_id)
+    ratings = Feedback.query.filter_by(book_id=book.id).all()
+    valid_ratings = [rating.rating for rating in ratings if rating.rating is not None]
+    avg_rating = sum(valid_ratings) / len(valid_ratings) if valid_ratings else 0
+
+    return render_template('book_detail.html', user=user , book=book, avg_rating=avg_rating, ratings=ratings)
 
 
 

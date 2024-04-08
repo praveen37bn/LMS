@@ -6,18 +6,18 @@
 <h1 class="display-3"> Feedback</h1>
 <hr>
 <div class="container">
-    <div class="row justify-content-center">
+    <div class="sections-list">
         <div class="col-md-6">
             <form method="POST">
                 <div class="mb-3">
-                    <label for="rating" class="form-label">Rating (0-5)</label>
-                    <input type="number" class="form-control" id="rating" name="rating" min="0" max="5" required>
+                    <label for="rating" class="form-label">Rating</label>
+                    <input type="number" class="form-control" id="rating" name="rating" min="0" max="5"  placeholder="0 to 5"required>
                 </div>
                 <div class="mb-3">
                     <label for="feedback" class="form-label">Feedback</label>
                     <textarea class="form-control" id="feedback" name="feedback" rows="5" required></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary">Submit Feedback</button>
+                <button type="submit" class="btn btn-info">Submit feedback</button>
             </form>
         </div>
     </div>

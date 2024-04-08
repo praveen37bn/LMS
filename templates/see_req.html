@@ -9,6 +9,7 @@
 {% block content %}
 
 <h1 class="display-5">Book Requests</h1>
+
 <h3>Book Requests</h3>
 
 
@@ -29,7 +30,7 @@
         <tr>
             <td>{{ request.book.name }}</td>
             
-            <td>{{ request.request_date }}</td>
+            <td>{{ request.request_date.strftime('%Y-%m-%d') }}</td>
             <td>{{ request.requested_day }}</td>
             <td>
                 <span style="background-color: rgb(255, 244, 127);">{{request.status}}</span></td>
@@ -71,7 +72,7 @@
         
         <tr>
             <td>{{ request.book.name }}</td>
-            <td>{{ request.issued_date}}</td>
+            <td>{{ request.issued_date.strftime('%Y-%m-%d')}}</td>
             <td>{{ request.requested_day }}</td>
             <td>
                 <span style="background-color: rgb(255, 244, 127);">{{request.status}}</span></td>
