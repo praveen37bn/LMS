@@ -352,12 +352,13 @@ def mybook():
 @app.route('/read_book/<int:book_request_id>', methods=['POST'])
 @auth_required  
 def mybook_read(book_request_id):
+    user = User.query.get(session['user_id'])
     book_request = BookRequest.query.get(book_request_id)
     if book_request and book_request.status == 'Granted':
         book = book_request.book
-        return render_template('book/show.html', book=book)
+        return render_template('book/show.html', book=book,user=user)
     flash('Access denied Book request not granted.')
-    return redirect(url_for('mybook'))  
+    return redirect(url_for('mybook'),user=user)  
 
 
 @app.route('/return_request/<int:book_request_id>', methods=['POST'])
@@ -395,6 +396,7 @@ def myreqeust_return(book_id):
 def book_request():
     user = User.query.get(session['user_id'])
     request = BookRequest.query.filter_by(user_id=session['user_id']).all()
+    
     return render_template('requests/send_req.html',request= request,user=user)
 
 
@@ -409,12 +411,20 @@ def book_request_post(book_id):
         return redirect(url_for('index'))
 
     check_exist = BookRequest.query.filter_by(user_id=user_id, book_id=book_id).first()
-
+    
     if check_exist:
         flash('You have already requested for this book')
         return redirect(url_for('index'))
 
+    num_of_requests = BookRequest.query.filter_by(user_id=user_id, status='Pending').count()
+
+    if  num_of_requests >= 5:
+        flash('You have reached the maximum limit of 5 requests')
+        return redirect(url_for('index'))
         
+   
+
+    
     new_request = BookRequest(user_id=user_id, book_id=book_id, requested_day=days)
     db.session.add(new_request)
     db.session.commit()
@@ -431,9 +441,7 @@ def see_requests():
 
     return render_template('requests/see_req.html', requests=requests ,user = user)
 
-
 #################################
-
 
 @app.route('/process_request/<int:request_id>/<action>', methods=['POST'])
 @librarian_required
@@ -449,9 +457,9 @@ def process_request(request_id, action):
         if book_request.requested_day:
             book_request.access_expiry = book_request.issued_date + timedelta(days=book_request.requested_day)
         
-        if book_request.access_expiry < datetime.utcnow():
-            book_request.status = 'Expired'
-            book_request.return_date = book_request.access_expiry
+    if book_request.access_expiry< datetime.utcnow():
+        book_request.status = 'Expired'
+        book_request.return_date = book_request.access_expiry
 
     elif action == 'reject':
         # Revoke access
