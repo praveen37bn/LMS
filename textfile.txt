@@ -1,0 +1,49 @@
+Here are the flash messages that are used in the provided Flask application:
+
+1. **For Registration:**
+   - `'Please fill out all fields'`: Displayed when not all required fields are filled out.
+   - `'Passwords do not match'`: Displayed when the passwords provided in the registration form do not match.
+   - `'Username already exists'`: Displayed when the username provided during registration already exists in the database.
+
+2. **For Login:**
+   - `'Please fill out all fields'`: Displayed when not all required fields are filled out in the login form.
+   - `'Username does not exist'`: Displayed when the username provided during login does not exist in the database.
+   - `'Incorrect password'`: Displayed when the password provided during login does not match the stored password for the username.
+
+3. **For Profile Update:**
+   - `'Please fill out all the required fields'`: Displayed when not all required fields are filled out in the profile update form.
+   - `'Incorrect Password'`: Displayed when the current password entered for profile update does not match the user's actual password.
+   - `'Username already exists'`: Displayed when attempting to change the username to one that already exists in the database.
+   - `'Profile update successfully'`: Displayed when the profile update is completed successfully.
+
+4. **For Authentication and Authorization:**
+   - `'Please login to continue'`: Displayed when trying to access a page that requires authentication without being logged in.
+   - `'You are not authorized to access this page'`: Displayed when a non-librarian user attempts to access a page restricted to librarians.
+
+5. **For Book Requests:**
+   - `'You can request max 20 days'`: Displayed when attempting to request a book for more than 20 days or less than 0 days.
+   - `'You have already requested for this book'`: Displayed when a user tries to request the same book multiple times.
+   - `'You have reached the maximum limit of 5 requests'`: Displayed when a user has already made 5 pending book requests.
+
+6. **For General Actions:**
+   - `'Login successful'`: Displayed upon successful login.
+   - `'Profile update successfully'`: Displayed when the user's profile is successfully updated.
+   - `'Book request sent successfully'`: Displayed when a book request is successfully submitted.
+   - `'Book request not found'`: Displayed when attempting to access a book request that does not exist.
+
+7. **For Book Actions (Add, Edit, Delete):**
+   - `'Product added successfully'`: Displayed when a book is successfully added.
+   - `'Product edited successfully'`: Displayed when a book is successfully edited.
+   - `'Book deleted successfully'`: Displayed when a book is successfully deleted.
+   - `'Book does not exist'`: Displayed when attempting to perform actions on a book that does not exist.
+
+8. **For Book Access and Feedback:**
+   - `'Access denied Book request not granted.'`: Displayed when attempting to access a book that has not been granted by the librarian.
+   - `'Feedback sent successfully.'`: Displayed when feedback is successfully submitted for a book.
+
+9. **For Book Requests Management (Granting and Rejecting):**
+   - `'Request processed successfully'`: Displayed when a book request is processed (granted or rejected) by the librarian.
+   - `'Book request return'`: Displayed when a book return request is processed.
+   - `'Invalid book return request'`: Displayed when attempting to return a book with an invalid request.
+
+These flash messages provide feedback to users about the outcome of various actions or requests within the Flask application, helping to guide them and notify them of any errors or successful operations.
