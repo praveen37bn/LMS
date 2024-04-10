@@ -362,6 +362,7 @@ def mybook_read(book_request_id):
 
     if book_request.access_expiry < datetime.utcnow() :
         book_request.status = "Expired"
+        db.session.delete(book_request)
         db.session.commit()  
     
 
@@ -392,8 +393,7 @@ def myrequest_return(book_request_id):
 @auth_required
 def myreqeust_return(book_id):
     book = BookRequest.query.get(book_id)
-    book.return_date = datetime.utcnow()
-    book.status = 'Complete'
+    db.session.delete(book)
     db.session.commit()
     flash('book Returnd successfully')
     return redirect(url_for('mybook'))
@@ -418,7 +418,7 @@ def book_request_post(book_id):
     days =  int(request.form.get('requested_day'))
     user_id = session['user_id']
     
-    if days > 20 and days < 0 :
+    if days > 30 and days < 0 :
         flash('You can request max 20 days')
         return redirect(url_for('index'))
 
@@ -433,13 +433,12 @@ def book_request_post(book_id):
     if  num_of_requests >= 5:
         flash('You have reached the maximum limit of 5 requests')
         return redirect(url_for('index'))
-        
-   
 
     
     new_request = BookRequest(user_id=user_id, book_id=book_id, requested_day=days)
     db.session.add(new_request)
     db.session.commit()
+    
 
     flash('Book request sent successfully')
     return redirect(url_for('index'))
@@ -450,7 +449,6 @@ def see_requests():
     requests = BookRequest.query.all()
     user_id = session.get('user_id')
     user = User.query.get(user_id)
-
     return render_template('see_req.html', requests=requests ,user = user)
 
 #################################
@@ -466,22 +464,15 @@ def process_request(request_id, action):
     if action == 'grant':
         book_request.issued_date = datetime.utcnow()
         book_request.status = 'Granted'
+        
+        book_request.access_expiry = book_request.issued_date + timedelta(days=book_request.requested_day)
+       
        
     elif action == 'reject':
         book_request.status = 'Rejected'
         book_request.issued_date = None
         book_request.access_expiry = None
-
-
-    # if book_request.requested_day:
-    #         book_request.access_expiry = book_request.issued_date + timedelta(days=book_request.requested_day)
-
-    # if book_request.access_expiry < datetime.utcnow() :
-    #     book_request.status = "Expired"
-    #     db.session.commit()  
-    #
-    # if book_request.status == 'Rejected' or book_request.status=='Expired':
-    #     db.session.delete(book_request)  
+        db.session.delete(book_request)
 
     db.session.commit()
     flash('Request processed successfully')

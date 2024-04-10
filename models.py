@@ -30,7 +30,7 @@ class Book(db.Model):
     
     section_id = db.Column(db.Integer, db.ForeignKey('section.id'), nullable=False)#
     bookrequest = db.relationship('BookRequest', backref='book', lazy=True, cascade='all, delete-orphan')#
-    feedback_records = db.relationship('Feedback', backref='related_book', lazy=True, cascade='all, delete-orphan')
+    feedback_records = db.relationship('Feedback', backref='', lazy=True, cascade='all, delete-orphan')
 
 
 class BookRequest(db.Model):
@@ -41,10 +41,11 @@ class BookRequest(db.Model):
     requested_day=db.Column(db.Integer)#
     status=db.Column(db.String(30),default='Pending')#
     issued_date = db.Column(db.DateTime) 
-    return_date = db.Column(db.DateTime)
+    return_date = db.Column(db.DateTime) # no need
     access_expiry = db.Column(db.DateTime)
-
     
+    user = db.relationship('User', backref='bookrequest', lazy=True)
+
 
 class Feedback(db.Model):
     id = db.Column(db.Integer, primary_key=True)
