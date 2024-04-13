@@ -5,17 +5,13 @@
 {% endblock %}
 
 {% block content %}
-
-
-
 <h1 class="display-1">Librarian Dashboard</h1>
-
-
 <table class="table">
     <thead>
         <tr>
             <th>Section Name</th>
-            <th>Upload_Date</th>
+            <th>Upload Date</th>
+            <th>No of Books</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -24,6 +20,7 @@
         <tr>
             <td>{{section.name}}</td>
             <td>{{section.date_created.strftime('%Y-%m-%d')}}</td>
+            <td>{{section.books|length}}</td>
             <td>
                 <a href="{{url_for('show_section', id=section.id)}}" class="btn btn-warning">
                     Show Books

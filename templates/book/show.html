@@ -20,10 +20,10 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Book Name:   {{ book.name }}</h1>
-    <p><strong>Book Authors:   </strong> {{ book.authors }}</p>
+    <h1>{{ book.name }}</h1>
+    <p><b>Author:   </b> {{ book.authors }}</p>
     <div class="content-container">
-    <p><strong>Content:  </strong></p>
+    <p><b>Content:  </b></p>
         <pre class="content-text">{{ book.content }}</pre>
     </div>
 {% endblock %}

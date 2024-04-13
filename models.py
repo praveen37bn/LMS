@@ -57,15 +57,6 @@ class Feedback(db.Model):
     user = db.relationship('User', backref=db.backref('feedback', lazy=True))
     book = db.relationship('Book', backref=db.backref('feedback', lazy=True))
     
-class AccessLog(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    book_id = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=False)
-    access_date = db.Column(db.Date, default=datetime.now, nullable=False)
-    revoked = db.Column(db.Boolean, default=False)
-
-    user = db.relationship('User', backref=db.backref('accesslog', lazy=True))
-    book = db.relationship('Book', backref=db.backref('accesslog', lazy=True))
 
 with app.app_context():
     db.create_all()

@@ -13,18 +13,17 @@
 <form action="{{url_for('edit_book_post', id=book.id)}}" method="post" class="form">
     <div class="form-group">
         <label for="name" class="form-label">Book Name:</label>
-        <input type="text" name="name" id="name" class="form-control" value="{{book.name}}" required>
+        <input type="text" name="name" id="name" class="form-control" value="{{book.name}}" >
     </div>
     <div class="form-group">
         <label for="authors" class="form-label">Book Authors:</label>
-        <input type="text" name="authors" id="authors" value="{{book.authors}}" class="form-control" required>
+        <input type="text" name="authors" id="authors" value="{{book.authors}}" class="form-control" >
     </div>
 
     <div class="form-group">
         <label for="content" class="form-label">Book Content:</label>
-        <textarea name="content" id="content" value="{{book.content}}"  class="form-control" rows="5"  required></textarea>
+        <textarea name="content" id="content" class="form-control" rows="10" >{{book.content}}</textarea>
     </div>
-
 
     <div class="form-group">
         <label for="section_id" class="form-label">Section:</label>
@@ -38,11 +37,8 @@
             {% endfor %}
         </select>
 
-
     <button type="submit" class="btn btn-warning">
-
         Edit
     </button>
 </form>
-
 {% endblock %}

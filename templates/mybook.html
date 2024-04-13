@@ -13,7 +13,7 @@
             <th>Section</th>
             <th>Book Author</th>
             <th>Status</th>
-            <th>read book</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -48,7 +48,7 @@
             <th>Section</th>
             <th>Book Author</th>
             <th>Status</th>
-            <th>read book</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -66,7 +66,7 @@
                     <button type="submit" class="btn btn-info">Read Book</button>
                 </form>
             
-                <form action="{{ url_for('myreqeust_return',book_id = mybook.id)}}" method="post">
+                <form action="{{ url_for('mybook_return',book_id = mybook.id)}}" method="post">
                     <button type="submit" class="btn btn-danger">Return Book</button>
                 </form>
             

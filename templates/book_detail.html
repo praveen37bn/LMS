@@ -11,20 +11,19 @@
             <p><b>Description:</b> {{ book.section.description }}</p>
             <p><b>Authors:</b> {{ book.authors }}</p>
             <p><b>Upload Date:</b> {{ book.book_upload_date.strftime('%Y-%m-%d') }}</p>
-            <p><b>Average Rating:</b> {{ avg_rating }}</p>
+            <p><b>Average Rating:</b> {{ book.book_rating }}</p>
             <form action="{{ url_for('book_request_post', book_id=book.id) }}" method="post">
                 <div class="form-group">
                     <label for="requested_day">Number of Days:</label>
                     <input type="number" name="requested_day" class="form-control" placeholder="Enter number of days" required>
                 </div>
-                <input type="hidden" name="book_id" value="{{ book.id }}">
                 <button type="submit" class="btn btn-info">Order Now</button>
             </form>
             <br>
             <br>
             <p><b>Feedback:</b></p>
             <ul>
-                {% for feedback in ratings %}
+                {% for feedback in feedbacks %}
                     <b>{{feedback.user.username}}</b>
                     <p>- {{ feedback.feedback }}</p>
                 {% endfor %}
@@ -34,7 +33,6 @@
 
     <div class="row mt-4">
         <div class="col-md-12">
-           
         </div>
     </div>
 </div>
