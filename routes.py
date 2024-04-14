@@ -295,6 +295,19 @@ def edit_book_post(id):
     flash('Product edited successfully')
     return redirect(url_for('show_section', id=section_id))
 
+@app.route('/book/<int:id>/see_feedback')
+@librarian_required
+def see_feedback(id):
+    user = User.query.get(session['user_id'])
+    book = Book.query.get(id)
+    if not book:
+        flash('Book does not exist')
+        return redirect(url_for('librarian'))
+    feedbacks = Feedback.query.filter_by(book_id=id).all()
+    return render_template('showfeedback.html',user=user,book=book,feedbacks=feedbacks)
+
+
+
 
 @app.route('/book/<int:id>/delete')
 @librarian_required

@@ -66,12 +66,12 @@
                     <button type="submit" class="btn btn-info">Read Book</button>
                 </form>
             
-                <form action="{{ url_for('mybook_return',book_id = mybook.id)}}" method="post">
-                    <button type="submit" class="btn btn-danger">Return Book</button>
-                </form>
-            
                 <form action="{{url_for('myfeedback', book_id = mybook.id)}}">
                     <button type="submit" class="btn btn-secondary"> feedback </button>
+                </form>
+
+                <form action="{{ url_for('mybook_return',book_id = mybook.id)}}" method="post">
+                    <button type="submit" class="btn btn-danger">Return Book</button>
                 </form>
 
             </div>

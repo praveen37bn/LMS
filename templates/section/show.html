@@ -39,6 +39,12 @@
                 <a href="{{url_for('edit_book' , id=book.id)}}" class="btn btn-secondary">
                     Edit
                 </a>
+
+                <a href="{{url_for('see_feedback', id=book.id)}}" class="btn btn-success">
+                    Feedbacks
+                </a>
+
+
                 <a href="{{url_for('delete_book', id=book.id)}}" class="btn btn-danger">
                     Delete
                 </a>
