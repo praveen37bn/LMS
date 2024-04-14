@@ -149,9 +149,6 @@ def librarian():
     return render_template('librarian.html', sections=sections, section_names=section_names,user= user )
 
 
-
-
-
 ################################
 
 @app.route('/section/add')
