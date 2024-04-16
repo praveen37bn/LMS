@@ -42,7 +42,7 @@ def register_post():
 def login():
     try:
         user = User.query.get(session['user_id'])
-        flash('you are logged in')
+        flash('You are logged in')
         return redirect(url_for('index',user=user))
     except:
         return render_template('login.html')
@@ -473,6 +473,9 @@ def process_request(request_id, action):
        
     elif action == 'reject':
         db.session.delete(book_request)
+        db.session.commit()
+        flash(' Rejected successfully')
+        return redirect(url_for('see_requests'))
 
     db.session.commit()
     flash('Request processed successfully')

@@ -15,16 +15,17 @@
             <form action="{{ url_for('book_request_post', book_id=book.id) }}" method="post">
                 <div class="form-group">
                     <label for="requested_day">Number of Days:</label>
-                    <input type="number" name="requested_day" class="form-control" placeholder="Enter number of days" required>
+                    <input type="number" name="requested_day" class="form-control" placeholder="Enter number of days (Max 30)" required>
                 </div>
-                <button type="submit" class="btn btn-info">Order Now</button>
+                <button type="submit" class="btn btn-info">Send Book Request</button>
             </form>
             <br>
             <br>
             <p><b>Feedback:</b></p>
             <ul>
                 {% for feedback in feedbacks %}
-                    <b>{{feedback.user.username}}</b>
+                    <b>Username: {{feedback.user.username}} </b>
+                    <p> <b>Rating :</b>{{ feedback.rating }}</p>
                     <p>- {{ feedback.feedback }}</p>
                 {% endfor %}
             </ul>
